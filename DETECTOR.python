@@ -1,0 +1,77 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="AI Job Scam Detector",
+    page_icon="🛡️"
+)
+
+st.title("🛡️ AI-Powered Job/Internship Scam Detector")
+st.write("Analyze a job offer and identify common scam indicators.")
+
+st.subheader("Enter Job Details")
+
+company = st.text_input("Company Name")
+email = st.text_input("Recruiter Email")
+website = st.text_input("Company Website")
+
+job_description = st.text_area(
+    "Paste Job / Internship Description",
+    height=200
+)
+
+if st.button("🔍 Analyze Job"):
+
+    text = (
+        company + " " +
+        email + " " +
+        website + " " +
+        job_description
+    ).lower()
+
+    risk = 0
+    reasons = []
+
+    if "registration fee" in text or "pay" in text or "payment" in text:
+        risk += 30
+        reasons.append("💰 Payment or registration fee mentioned")
+
+    if "guaranteed job" in text or "guaranteed" in text:
+        risk += 20
+        reasons.append("⚠️ Guaranteed job claim detected")
+
+    if "urgent" in text or "immediately" in text:
+        risk += 15
+        reasons.append("⏰ Urgent/pressure language detected")
+
+    if "work from home" in text and "50000" in text:
+        risk += 20
+        reasons.append("💵 Potentially unrealistic salary claim")
+
+    if "whatsapp" in text or "telegram" in text:
+        risk += 15
+        reasons.append("📱 Unusual recruitment communication channel")
+
+    risk = min(risk, 100)
+
+    st.subheader("🔎 Analysis Result")
+
+    if risk >= 60:
+        st.error("🔴 HIGH RISK — POSSIBLE SCAM")
+    elif risk >= 30:
+        st.warning("🟠 SUSPICIOUS JOB OFFER")
+    else:
+        st.success("🟢 LOW RISK — NO MAJOR RED FLAGS")
+
+    st.metric("Risk Score", f"{risk}/100")
+
+    if reasons:
+        st.subheader("🚩 Detected Red Flags")
+        for reason in reasons:
+            st.write(reason)
+    else:
+        st.write("✅ No major scam indicators detected.")
+
+    st.info(
+        "Recommendation: Do not pay money or share sensitive personal "
+        "information until the employer is verified."
+    )
