@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Scam Detector</title>
+    <!-- Google Fonts & FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #31333F;
+            --primary-color: #ff4b4b; 
+            --border-color: #d6d6d6;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+            color: #111;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.4rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 75, 75, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            height: 150px;
+        }
+
+        .btn-analyze {
+            background-color: #ffffff;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-analyze:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        #results-container {
+            display: none;
+            margin-top: 2rem;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-high { background-color: #ffebeb; color: #b30000; border: 1px solid #ffcccc; }
+        .alert-medium { background-color: #fff8e6; color: #b37400; border: 1px solid #ffe8b3; }
+        .alert-low { background-color: #e6f4ea; color: #137333; border: 1px solid #ceead6; }
+
+        .metric-box {
+            background: #f1f3f5;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+
+        .reasons-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .reasons-list li {
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+        }
+
+        .info-box {
+            background-color: #e8f4fd;
+            color: #0d6efd;
+            padding: 1rem;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin-top: 1.5rem;
+            border: 1px solid #b6d4fe;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛡️ AI-Powered Job/Internship Scam Detector</h1>
+    <p class="subtitle">Analyze a job offer and identify common scam indicators.</p>
+
+    <h3>Enter Job Details</h3>
+    
+    <div class="form-group">
+        <label for="company">Company Name</label>
+        <input type="text" id="company" placeholder="e.g. Google">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Recruiter Email</label>
+        <input type="text" id="email" placeholder="e.g. hr@company.com">
+    </div>
+
+    <div class="form-group">
+        <label for="website">Company Website</label>
+        <input type="text" id="website" placeholder="e.g. www.company.com">
+    </div>
+
+    <div class="form-group">
+        <label for="job_description">Paste Job / Internship Description</label>
+        <textarea id="job_description" placeholder="Paste full description here..."></textarea>
+    </div>
+
+    <button class="btn-analyze" onclick="analyzeJob()">
+        <i class="fa-solid fa-magnifying-glass"></i> Analyze Job
+    </button>
+
+    <!-- Dynamic Output Section -->
+    <div id="results-container">
+        <h3>🔎 Analysis Result</h3>
+        
+        <div id="alert-box" class="alert"></div>
+
+        <div class="metric-box">
+            <div class="metric-title">Risk Score</div>
+            <div class="metric-value" id="risk-score-val">0/100</div>
+        </div>
+
+        <div id="reasons-section">
+            <h3 style="font-size: 1rem;">🚩 Detected Red Flags</h3>
+            <ul id="reasons-list" class="reasons-list"></ul>
+        </div>
+
+        <div class="info-box">
+            <i class="fa-solid fa-circle-info" style="margin-top: 3px;"></i>
+            <div><strong>Recommendation:</strong> Do not pay money or share sensitive personal information until the employer is verified.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function analyzeJob() {
+        const company = document.getElementById('company').value.trim();
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const website = document.getElementById('website').value.trim().toLowerCase();
+        const jobDesc = document.getElementById('job_description').value.trim();
+
+        const text = (company + " " + email + " " + website + " " + jobDesc).toLowerCase();
+
+        let risk = 0;
+        let reasons = [];
+
+        // 1. Validation for "Wrong Information" (Suspicious indicators / Red Flags)
+        if (email.includes("@gmail.com") || email.includes("@yahoo.com") || email.includes("@outlook.com") || email.includes("@hotmail.com")) {
+            risk += 35;
+            reasons.push("❌ High Risk: Recruiter is using a free personal email domain instead of official company domain.");
+        }
+
+        if (text.includes("registration fee") || text.includes("pay") || text.includes("payment")) {
+            risk += 30;
+            reasons.push("💰 Payment or registration fee mentioned");
+        }
+
+        if (text.includes("guaranteed job") || text.includes("guaranteed")) {
+            risk += 20;
+            reasons.push("⚠️ Guaranteed job claim detected");
+        }
+
+        if (text.includes("urgent") || text.includes("immediately")) {
+            risk += 15;
+            reasons.push("⏰ Urgent/pressure language detected");
+        }
+
+        if (text.includes("work from home") && text.includes("50000")) {
+            risk += 20;
+            reasons.push("💵 Potentially unrealistic salary claim");
+        }
+
+        if (text.includes("whatsapp") || text.includes("telegram")) {
+            risk += 15;
+            reasons.push("📱 Unusual recruitment communication channel");
+        }
+
+        // If website is completely blank or missing formatting
+        if (website === "" || (!website.includes(".") && website.length > 0)) {
+            risk += 20;
+            reasons.push("❌ High Risk: Invalid or missing company website format.");
+        }
+
+        // Cap risk at 100
+        risk = Math.min(risk, 100);
+
+        // Render Results UI
+        const resultsContainer = document.getElementById('results-container');
+        const alertBox = document.getElementById('alert-box');
+        const riskScoreVal = document.getElementById('risk-score-val');
+        const reasonsList = document.getElementById('reasons-list');
+        const reasonsSection = document.getElementById('reasons-section');
+
+        resultsContainer.style.display = 'block';
+        riskScoreVal.innerText = `${risk}/100`;
+
+        alertBox.className = "alert";
+
+        // Condition Mapping: High Risk vs Low Risk
+        if (risk >= 40) {
+            // Evaluated as wrong/suspicious information
+            alertBox.classList.add('alert-high');
+            alertBox.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> HIGH RISK — POSSIBLE SCAM`;
+        } else {
+            // Evaluated as correct/legitimate information structure
+            alertBox.classList.add('alert-low');
+            alertBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> LOW RISK — NO MAJOR RED FLAGS`;
+        }
+
+        // Populate Reasons
+        reasonsList.innerHTML = "";
+        if (reasons.length > 0) {
+            reasonsSection.style.display = "block";
+            reasons.forEach(reason => {
+                let li = document.createElement('li');
+                li.innerText = reason;
+                reasonsList.appendChild(li);
+            });
+        } else {
+            reasonsSection.style.display = "block";
+            reasonsList.innerHTML = "<li>✅ Information appears valid. No major scam indicators detected.</li>";
+        }
+        
+        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
